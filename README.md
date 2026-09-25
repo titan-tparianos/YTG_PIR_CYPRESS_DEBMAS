@@ -97,7 +97,13 @@ The program is a single object in package `YTGPI`. It depends on the following c
 
 `START-OF-SELECTION` instantiates the local class `LCL_CLASS` and calls its single public method `PROCESS_POINTERS`. All logic is contained in that method.
 
-```mermaid
+<!-- 1. Load the Mermaid code library -->
+<script type="module">
+  import mermaid from 'https://jsdelivr.net';
+  mermaid.initialize({ startOnLoad: true });
+</script>
+<!-- 2. Wrap your flowchart inside a div with the class "mermaid" -->
+<div class="mermaid">
 flowchart TD
     A["Lock ESINDX<br/>RELID 'ZZ', key = SY-REPID"] -->|"foreign lock: error, end"| Z1["'Program is already running'"]
     A --> B["CHANGE_POINTERS_READ<br/>object BUPA_BUP, msg type P_CPMT"]
@@ -112,7 +118,7 @@ flowchart TD
     I --> J["CHANGE_POINTERS_STATUS_WRITE<br/>all BUT0ID pointers read"]
     J --> K["COMMIT WORK"]
     K --> L["List: IDoc and pointer counters"]
-```
+</div>
 
 *The test run flag decides the path. Only the productive path creates IDocs and changes the pointer status.*
 
