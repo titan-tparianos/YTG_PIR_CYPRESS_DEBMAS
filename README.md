@@ -97,28 +97,7 @@ The program is a single object in package `YTGPI`. It depends on the following c
 
 `START-OF-SELECTION` instantiates the local class `LCL_CLASS` and calls its single public method `PROCESS_POINTERS`. All logic is contained in that method.
 
-<!-- CORRECTED: This contains the exact link to load the engine correctly -->
-<script type="module">
-  import mermaid from 'https://jsdelivr.net';
-  mermaid.initialize({ startOnLoad: true });
-</script>
-<!-- 2. Wrap your flowchart inside a div with the class "mermaid" -->
-<div class="mermaid">
-flowchart TD
-    A["Lock ESINDX<br/>RELID 'ZZ', key = SY-REPID"] -->|"foreign lock: error, end"| Z1["'Program is already running'"]
-    A --> B["CHANGE_POINTERS_READ<br/>object BUPA_BUP, msg type P_CPMT"]
-    B --> C["Keep TABNAME = 'BUT0ID' only"]
-    C -->|"none left"| Z2["'No unprocessed change pointers found'"]
-    C --> D["Collect distinct BPs<br/>from CDOBJID"]
-    D --> E["BUT000 ⋈ CVI_CUST_LINK ⋈ KNVV<br/>VKORG = 'GR02'"]
-    E --> F["KNA1 key table<br/>sorted, distinct KUNNR"]
-    F --> G{"Test run?<br/>P_TEST"}
-    G -- "X" --> H["List: customers to send,<br/>pointers to flag"]
-    G -- "blank" --> I["MASTERIDOC_CREATE_REQ_DEBMAS<br/>commits internally"]
-    I --> J["CHANGE_POINTERS_STATUS_WRITE<br/>all BUT0ID pointers read"]
-    J --> K["COMMIT WORK"]
-    K --> L["List: IDoc and pointer counters"]
-</div>
+[![](https://mermaid.ink/img/pako:eNptk9FymkAUhl_lzN54gymaxEamTQeBGIIiBTSppcMgrIYGdp0FprHG-870Lfsk3d2qsZ1ywcAu_7f_Oedni1KaYaShZUG_pY8JqyE0IxYR4Jf-OUIjmj6BFdiu-fBuwd5c-9bINqE1n7cUeMIbeA_Bp7ZvebYZoS_Qbl-_RGhJGc5XBAqu1QAzRpkCmGQReoF5h0NbHqMrlpSQV5AUDCfZBlhDSE5WLY45ni94MOAC41Z3h1bsTWw3tPwg9i3dlHbo4itOaxhMPT3mNwXKagX1Zo3Biw1vHJ7QBpJmcJqD8RpCfeDqY4sX0BpMQ9U2W0BJsTkRGPtyCCUYCryspf-u8O9SaMia0RRXFc6AN46sMKxpTmrMKljShmStf1FgikpoUQjHWV7VORHWvUpWsmS0BMOcDO5kKw9KUyotrhQuVRV-_fwBxsyOjWkQxiPbdeSK485mEjNzJv5QFDX01e6pBUuCbkT5rt6Rs6uTRYGlqqKsxpny6sqZuq5_or6R6uE2QiGuajGsD1LoxaEV8C7vDh8O-YcQoYcIScWtiBCHapA2VU1L0Z2aQsXToEjAsWd8dVkkq5Mz96hFkZCnPc7muLEe8AzY5sSIDZ6D0OJp-Bib1oBvSGRKyzKvK5BgkhR_DdWWnLv_ZCoI9XAaxPe-HVqSw5XwJxqvkxVZPaHdSZojaJPx2A7hfuI7J_uO3B8dm2CbNIWEZAcgpDwpArzXIAWtWJ4hrWYNVhBvV5mIV7QVvAjVj7jEEdL4I8NZ89xOaUFZhCKy49J1QuaUlgc1o83qEWnLpKj4W7POkhqbeSJ-vOMq44PAzBAukNbtSQbStugZaeed7pnav-x1Or2rfqfb55sbpF2oZ90Ltde96qm9t_3zTn-noO_yUPXs6u3l7jcp9lHs?type=png)](https://mermaid.live/edit#pako:eNptk9FymkAUhl_lzN54gymaxEamTQeBGIIiBTSppcMgrIYGdp0FprHG-870Lfsk3d2qsZ1y4bC7_N_-55zfLUpphpGGIhaRZUG_pY8JqyE0xRr4o3-O0IimT2AFtms-vFuwN9e-NbJNaM3nLQWe8AbeQ_Cp7VuebUboC7Tb1y8RWlKG8xWBgms1wIxRpgAmWYReYN7h0JbH6IolJeQVJAXDSbYB1hCSk1WLY473Cx4MuMC41d2hFXsT2w0tP4h9SzelHbr4itMaBlNPj_mPAmW1gnqzxuDFhjcOT2gDSTM4zcF4DaE-cPWxxQtoDaahapstoKTYnAiMfTmEEgwFXtbSf1f4dyk0ZM1oiqsKZ8AbR1YY1jQnNWYVLGlDsta_KDBFJbQohOMsr-qcCOteJStZMlqCYU4Gd7KVB6UplRZXCpeqCr9-_gBjZsfGNAjjke06csdxZzOJmTkTfyiKGvpq99SCJUE3onxX78jZ1cmiwFJVUVbjTHl15Uxd1z9R30j1cBuhEFe1GNYHKfTi0Ap4l3eHD4f8Q4jQQ4Sk4lZEiEM1SJuqpqXoTk2h4mlQJODYM767LJLVyZ171KJIyNMeZ3PcWA94BmxzYsQGz0Fo8TR8jE1rwA8kMqVlmdcVSDBJir-GakvO3X8yFYR6OA3ie98OLcnhSvgTjdfJiqye0O4kzRG0yXhsh3A_8Z2Tc0eej45NsE2aQkKyAxBSnhQB3muQglYsz5BWswYriLerTMQSbQUvQvUjLnGENP7KcNY8t1NaUBahiOy4dJ2QOaXlQc1os3pE2jIpKr5q1llSYzNPxB_vuMv4IDAzhAukdbuSgbQtekbaead7pvYve51O76rf6fZ7Ctog7UI9616ove5VT-297Z93-jsFfZeXqmdXby93vwEK21OA))
 
 *The test run flag decides the path. Only the productive path creates IDocs and changes the pointer status.*
 
