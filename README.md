@@ -97,7 +97,7 @@ The program is a single object in package `YTGPI`. It depends on the following c
 
 `START-OF-SELECTION` instantiates the local class `LCL_CLASS` and calls its single public method `PROCESS_POINTERS`. All logic is contained in that method.
 
-<!-- 1. Load the Mermaid code library -->
+<!-- CORRECTED: This contains the exact link to load the engine correctly -->
 <script type="module">
   import mermaid from 'https://jsdelivr.net';
   mermaid.initialize({ startOnLoad: true });
