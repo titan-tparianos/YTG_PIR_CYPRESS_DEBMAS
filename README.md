@@ -52,11 +52,13 @@ The program is a single object in package `YTGPI`. It depends on the following c
 | `BD64` | Distribution model | `DEBMAS` to the Cypress logical system | Receiver determination when `P_LOGSYS` is empty |
 | `WE20` | Partner profile | Outbound `DEBMAS` for the Cypress logical system | Port and IDoc type for the outbound IDoc |
 
-{% hint style="warning" %}
-**Message type name differs in the source header**
+> [!WARNING]
+>
+> **Message type name differs in the source header**
+>
+> The program header lists the prerequisites under message type `ZDEBMAS_ID`, while the selection screen default is `YGR_DEBMAS`. The customizing must match the value actually passed in `P_CPMT`. Align the header comment with the real message type.
 
-The program header lists the prerequisites under message type `ZDEBMAS_ID`, while the selection screen default is `YGR_DEBMAS`. The customizing must match the value actually passed in `P_CPMT`. Align the header comment with the real message type.
-{% endhint %}
+
 
 **Standard objects used**
 
@@ -83,11 +85,13 @@ The program header lists the prerequisites under message type `ZDEBMAS_ID`, whil
 | `P_LOGSYS` | Parameter | `LOGSYS` | Logical system | — | Empty = receivers from the distribution model; filled = send to this logical system directly |
 | `P_TEST` | Checkbox | — | Test run | `X` | No IDoc, no pointer flagging |
 
-{% hint style="info" %}
-**Default is test mode**
+> [!NOTE]
+>
+> **Default is test mode**
+>
+> `P_TEST` is ticked by default. A job variant for productive use must untick it explicitly, otherwise the job runs indefinitely without sending anything.
 
-`P_TEST` is ticked by default. A job variant for productive use must untick it explicitly, otherwise the job runs indefinitely without sending anything.
-{% endhint %}
+
 
 ## 4. Architecture
 
@@ -192,11 +196,13 @@ COMMIT WORK.
 
 Every `BUT0ID` pointer read in this run is flagged as processed — also those whose partner has no customer in `GR02`. This is deliberate: without it, those pointers would be read again on every run, indefinitely.
 
-{% hint style="danger" %}
-**Pointers are flagged regardless of the IDoc result**
+> [!IMPORTANT]
+>
+> **Pointers are flagged regardless of the IDoc result**
+>
+> The status is written after `MASTERIDOC_CREATE_REQ_DEBMAS` without checking `CREATED_MASTER_IDOCS`. If no IDoc is created — distribution model missing, filter not met, wrong `P_LOGSYS` — the pointers are still flagged and the change is not sent again. See §12.
 
-The status is written after `MASTERIDOC_CREATE_REQ_DEBMAS` without checking `CREATED_MASTER_IDOCS`. If no IDoc is created — distribution model missing, filter not met, wrong `P_LOGSYS` — the pointers are still flagged and the change is not sent again. See §12.
-{% endhint %}
+
 
 ## 9. Program structure
 
@@ -232,11 +238,13 @@ If the lock cannot be set the program ends with *Program is already running*. Th
 
 There are two commits in a productive run: the internal commit of `MASTERIDOC_CREATE_REQ_DEBMAS`, and the explicit `COMMIT WORK` after the pointer status update. IDoc creation and pointer flagging are therefore **not atomic** — a dump between the two leaves IDocs sent and pointers still unprocessed, so the same customers are sent again on the next run. For master data distribution this is the safe direction.
 
-{% hint style="warning" %}
-**Lock duration**
+> [!WARNING]
+>
+> **Lock duration**
+>
+> The lock is set with the default scope and is released at the first `COMMIT WORK`, i.e. inside `MASTERIDOC_CREATE_REQ_DEBMAS`. It therefore protects the read and mapping phase, not the pointer flagging. A second run starting in that window would read the same, not yet flagged pointers. For a single scheduled job this is harmless; to be strict, pass `_SCOPE = '1'` and dequeue explicitly at the end.
 
-The lock is set with the default scope and is released at the first `COMMIT WORK`, i.e. inside `MASTERIDOC_CREATE_REQ_DEBMAS`. It therefore protects the read and mapping phase, not the pointer flagging. A second run starting in that window would read the same, not yet flagged pointers. For a single scheduled job this is harmless; to be strict, pass `_SCOPE = '1'` and dequeue explicitly at the end.
-{% endhint %}
+
 
 ## 11. Output and messages
 
@@ -303,11 +311,14 @@ The program performs no `AUTHORITY-CHECK`. Anyone who can start it can trigger c
 5. **Re-run.** Execute again — *No unprocessed change pointers found* confirms the flagging.
 6. **Schedule.** Create a variant with `P_TEST` unticked and schedule the report as a periodic job (`SM36`) under the technical ALE user.
 
-{% hint style="info" %}
-**Transport**
+> [!TIP]
+> **Transport**
+>
+> `R3TR PROG YTG_PIR_CYPRESS_DEBMAS`, including text symbol `001` and the selection texts. The message type (`WE81`), change pointer activation (`BD50`), and change document fields (`BD52`) are customizing and need a separate customizing transport; the distribution model (`BD64`) and partner profile (`WE20`) are maintained per system.
 
-`R3TR PROG YTG_PIR_CYPRESS_DEBMAS`, including text symbol `001` and the selection texts. The message type (`WE81`), change pointer activation (`BD50`), and change document fields (`BD52`) are customizing and need a separate customizing transport; the distribution model (`BD64`) and partner profile (`WE20`) are maintained per system.
-{% endhint %}
+
+
+
 
 ---
 
